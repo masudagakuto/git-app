@@ -1,0 +1,26 @@
+# ローカルマシン用データベース設定例
+# このファイルを参考に database.yml を修正してください
+
+default: &default
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: root
+  password:  # パスワードがあればここに記入
+
+  # ソケットの場所（OS別）：
+  # macOS:     /tmp/mysql.sock
+  # Linux:     /var/run/mysqld/mysqld.sock
+  # また以下のように host を使用することもできます：
+  # host: 127.0.0.1
+  # port: 3306
+
+development:
+  <<: *default
+  database: git_app_development
+  socket: /tmp/mysql.sock  # macOS の場合
+
+test:
+  <<: *default
+  database: git_app_test
+  socket: /tmp/mysql.sock  # macOS の場合

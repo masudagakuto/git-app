@@ -2,6 +2,12 @@
   <h1>Rootpro CAD解析ツール</h1>
   <p>.rpcdファイルをアップロードすると、AI（llama2）が内容を解析します。</p>
 
+  <div class="health-section" style="border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; border-radius: 5px; background: #f5f5f5;">
+    <h3>Ollama接続確認</h3>
+    <button type="button" class="btn btn-secondary" onclick="checkHealth()">接続テスト</button>
+    <div id="healthStatus" style="margin-top: 10px;"></div>
+  </div>
+
   <div class="upload-section" style="border: 1px solid #ddd; padding: 20px; margin: 20px 0; border-radius: 5px;">
     <h3>ファイルアップロード</h3>
     <form id="uploadForm" enctype="multipart/form-data">
@@ -24,6 +30,41 @@
   const fileInput = document.getElementById('fileInput');
   const loading = document.getElementById('loading');
   const result = document.getElementById('result');
+
+  async function checkHealth() {
+    const healthStatus = document.getElementById('healthStatus');
+    healthStatus.innerHTML = '<p>⏳ 接続確認中...</p>';
+
+    try {
+      const response = await fetch('/cad_analyzer/health_check');
+      const data = await response.json();
+
+      if (data.status === 'connected') {
+        const models = data.models_available.join(', ');
+        const llama2Status = data.llama2_available ? '✅' : '⚠️';
+        healthStatus.innerHTML = `
+          <div style="border: 1px solid #d4edda; background: #d4edda; padding: 15px; border-radius: 5px; color: #155724;">
+            <strong>✅ Ollama接続成功</strong>
+            <p><strong>ホスト:</strong> ${data.ollama_host}</p>
+            <p><strong>利用可能なモデル:</strong> ${models || 'なし'}</p>
+            <p><strong>llama2:</strong> ${llama2Status} ${data.llama2_available ? '利用可能' : '未インストール (ollama pull llama2 を実行してください)'}</p>
+          </div>
+        `;
+      } else {
+        healthStatus.innerHTML = `
+          <div style="border: 1px solid #f5c6cb; background: #f8d7da; padding: 15px; border-radius: 5px; color: #721c24;">
+            <strong>❌ エラー:</strong> ${data.message}
+          </div>
+        `;
+      }
+    } catch (error) {
+      healthStatus.innerHTML = `
+        <div style="border: 1px solid #f5c6cb; background: #f8d7da; padding: 15px; border-radius: 5px; color: #721c24;">
+          <strong>❌ 通信エラー:</strong> ${error.message}
+        </div>
+      `;
+    }
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -105,5 +146,14 @@
 
   .btn-primary:hover {
     background-color: #0056b3;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
   }
 </style>

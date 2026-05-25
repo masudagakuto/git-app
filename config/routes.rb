@@ -3,5 +3,6 @@ Rails.application.routes.draw do
   root 'posts#index'
 
   get 'cad_analyzer', to: 'cad_analyzer#index'
+  get 'cad_analyzer/health_check', to: 'cad_analyzer#health_check'
   post 'cad_analyzer/analyze', to: 'cad_analyzer#analyze'
 end

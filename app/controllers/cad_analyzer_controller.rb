@@ -2,6 +2,15 @@ class CadAnalyzerController < ApplicationController
   def index
   end
 
+  def health_check
+    begin
+      result = OllamaService.health_check
+      render json: result
+    rescue => e
+      render json: { status: 'error', message: e.message }, status: :service_unavailable
+    end
+  end
+
   def analyze
     unless params[:file].present?
       return render json: { error: 'ファイルが選択されていません' }, status: :bad_request

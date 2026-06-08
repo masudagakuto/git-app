@@ -23,6 +23,12 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Ignore SQLite database files.
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/db/*.sqlite3-wal
+/db/*.sqlite3-shm
+
 /public/packs
 /public/packs-test
 /node_modules
